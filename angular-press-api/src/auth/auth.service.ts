@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -20,8 +24,8 @@ export class AuthService {
     const existingUser = await this.userRepository.findOne({
       where: [
         { userLogin: registerDto.username },
-        { userEmail: registerDto.email }
-      ]
+        { userEmail: registerDto.email },
+      ],
     });
 
     if (existingUser) {
@@ -45,7 +49,11 @@ export class AuthService {
     await this.userRepository.save(user);
 
     // Generate JWT token
-    const payload = { sub: user.id, username: user.userLogin, email: user.userEmail };
+    const payload = {
+      sub: user.id,
+      username: user.userLogin,
+      email: user.userEmail,
+    };
     const access_token = this.jwtService.sign(payload);
 
     return {
@@ -55,14 +63,14 @@ export class AuthService {
         username: user.userLogin,
         email: user.userEmail,
         displayName: user.displayName,
-      }
+      },
     };
   }
 
   async login(loginDto: LoginDto) {
     // Find user by username
     const user = await this.userRepository.findOne({
-      where: { userLogin: loginDto.username }
+      where: { userLogin: loginDto.username },
     });
 
     if (!user) {
@@ -70,7 +78,10 @@ export class AuthService {
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(loginDto.password, user.userPass);
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.userPass,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
@@ -81,7 +92,7 @@ export class AuthService {
       sub: user.id,
       username: user.userLogin,
       email: user.userEmail,
-      requirePasswordChange: user.requirePasswordChange || false
+      requirePasswordChange: user.requirePasswordChange || false,
     };
     const access_token = this.jwtService.sign(payload);
 
@@ -92,8 +103,8 @@ export class AuthService {
         username: user.userLogin,
         email: user.userEmail,
         displayName: user.displayName,
-        requirePasswordChange: user.requirePasswordChange || false
-      }
+        requirePasswordChange: user.requirePasswordChange || false,
+      },
     };
   }
 
@@ -131,14 +142,13 @@ export class AuthService {
       sub: user.id,
       username: user.userLogin,
       email: user.userEmail,
-      requirePasswordChange: false
+      requirePasswordChange: false,
     };
     const access_token = this.jwtService.sign(payload);
 
     return {
       access_token,
-      message: 'Password changed successfully'
+      message: 'Password changed successfully',
     };
   }
 }
-
