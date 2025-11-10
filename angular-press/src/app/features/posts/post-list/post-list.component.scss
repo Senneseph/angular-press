@@ -1,0 +1,19 @@
+.actions {
+  margin-bottom: 1rem;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+mat-table {
+  width: 100%;
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: right;
+}
