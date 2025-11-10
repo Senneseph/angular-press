@@ -8,6 +8,8 @@
 
 # Node
 /node_modules
+/angular-press-api
+/angular-press-api/node_modules
 npm-debug.log
 yarn-error.log
 
