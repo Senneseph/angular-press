@@ -12,4 +12,5 @@ dist
 coverage
 .angular
 .nyc_output
-
+.gitignore
+.augmentignore
