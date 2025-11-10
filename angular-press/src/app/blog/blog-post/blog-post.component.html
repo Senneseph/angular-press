@@ -1,0 +1,68 @@
+<div class="blog-container">
+  <header class="blog-header">
+    <div class="header-content">
+      <h1><a routerLink="/">Angular Press</a></h1>
+      <nav class="blog-nav">
+        <a routerLink="/">Home</a>
+        <a routerLink="/ap-admin">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="post-content">
+    @if (post$ | async; as post) {
+      <article class="post">
+        <header class="post-header">
+          <h1>{{ post.title }}</h1>
+          <div class="post-meta">
+            <span class="post-date">{{ formatDate(post.publishDate) }}</span>
+            @if (post.author) {
+              <span class="post-author">by {{ post.author }}</span>
+            }
+          </div>
+        </header>
+
+        @if (post.featured_image) {
+          <div class="post-featured-image">
+            <img [src]="post.featured_image" [alt]="post.title">
+          </div>
+        }
+
+        <div class="post-body" [innerHTML]="post.content"></div>
+
+        @if (post.categories && post.categories.length > 0) {
+          <div class="post-categories">
+            <strong>Categories:</strong>
+            @for (category of post.categories; track category) {
+              <span class="category-tag">{{ category }}</span>
+            }
+          </div>
+        }
+
+        @if (post.tags && post.tags.length > 0) {
+          <div class="post-tags">
+            <strong>Tags:</strong>
+            @for (tag of post.tags; track tag) {
+              <span class="tag">{{ tag }}</span>
+            }
+          </div>
+        }
+
+        <div class="post-footer">
+          <a routerLink="/" class="back-link">← Back to Home</a>
+        </div>
+      </article>
+    } @else {
+      <div class="post-not-found">
+        <h1>Post Not Found</h1>
+        <p>The post you're looking for doesn't exist or has been removed.</p>
+        <a routerLink="/" class="back-link">← Back to Home</a>
+      </div>
+    }
+  </main>
+
+  <footer class="blog-footer">
+    <p>&copy; 2025 Angular Press. Built with Angular.</p>
+  </footer>
+</div>
+

@@ -1,0 +1,54 @@
+<div class="blog-container">
+  <header class="blog-header">
+    <h1>Angular Press</h1>
+    <p class="tagline">A Modern WordPress Alternative</p>
+    <nav class="blog-nav">
+      <a routerLink="/">Home</a>
+      <a routerLink="/ap-admin">Admin</a>
+    </nav>
+  </header>
+
+  <main class="blog-content">
+    <div class="posts-grid">
+      @if (posts$ | async; as posts) {
+        @if (posts.length > 0) {
+          @for (post of posts; track post.id) {
+            @if (post.status === 'published') {
+              <article class="post-card">
+                @if (post.featured_image) {
+                  <div class="post-image">
+                    <img [src]="post.featured_image" [alt]="post.title">
+                  </div>
+                }
+                <div class="post-content">
+                  <h2>
+                    <a [routerLink]="['/post', post.slug]">{{ post.title }}</a>
+                  </h2>
+                  <div class="post-meta">
+                    <span class="post-date">{{ formatDate(post.publishDate) }}</span>
+                    @if (post.author) {
+                      <span class="post-author">by {{ post.author }}</span>
+                    }
+                  </div>
+                  <p class="post-excerpt">{{ getExcerpt(post) }}</p>
+                  <a [routerLink]="['/post', post.slug]" class="read-more">Read More →</a>
+                </div>
+              </article>
+            }
+          }
+        } @else {
+          <div class="no-posts">
+            <h2>No posts yet</h2>
+            <p>Check back soon for new content!</p>
+            <a routerLink="/ap-admin" class="admin-link">Go to Admin</a>
+          </div>
+        }
+      }
+    </div>
+  </main>
+
+  <footer class="blog-footer">
+    <p>&copy; 2025 Angular Press. Built with Angular.</p>
+  </footer>
+</div>
+
