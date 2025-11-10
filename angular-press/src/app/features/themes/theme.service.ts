@@ -6,11 +6,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ThemeService {
-  private activeTheme = new BehaviorSubject<ThemeConfig>(this.config);
+  private activeTheme!: BehaviorSubject<ThemeConfig>;
   private loadedStyles: HTMLLinkElement[] = [];
   private loadedScripts: HTMLScriptElement[] = [];
 
-  constructor(@Inject(THEME_CONFIG) private config: ThemeConfig = DEFAULT_THEME_CONFIG) {}
+  constructor(@Inject(THEME_CONFIG) private config: ThemeConfig = DEFAULT_THEME_CONFIG) {
+    this.activeTheme = new BehaviorSubject<ThemeConfig>(this.config);
+  }
 
   getActiveTheme(): Observable<ThemeConfig> {
     return this.activeTheme.asObservable();

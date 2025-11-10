@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Post } from '../models/post.model';
+import { Post } from '../core/models/post.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -8,31 +8,36 @@ import { Post } from '../models/post.model';
 export class PostService {
   private posts: Post[] = [
     {
-      id: 1,
+      id: '1',
       title: 'Welcome to Angular Press',
       content: 'This is a sample post created with Angular Press CMS.',
       excerpt: 'Sample post introduction',
-      status: 'publish',
+      status: 'published',
       type: 'post',
-      authorId: 1,
-      dateCreated: new Date(),
-      dateModified: new Date(),
+      author: 'Admin',
+      publishDate: new Date(),
+      modified: new Date(),
       slug: 'welcome-to-angular-press',
-      categories: [1],
-      tags: ['angular', 'cms']
+      categories: ['1'],
+      tags: ['angular', 'cms'],
+      featured_image: '',
+      meta: {}
     },
     {
-      id: 2,
+      id: '2',
       title: 'Getting Started Guide',
       content: 'This guide will help you get started with Angular Press.',
       excerpt: 'Getting started with Angular Press',
-      status: 'publish',
+      status: 'published',
       type: 'page',
-      authorId: 1,
-      dateCreated: new Date(),
-      dateModified: new Date(),
+      author: 'Admin',
+      publishDate: new Date(),
+      modified: new Date(),
       slug: 'getting-started',
-      categories: [2]
+      categories: ['2'],
+      tags: [],
+      featured_image: '',
+      meta: {}
     }
   ];
 
@@ -45,7 +50,7 @@ export class PostService {
     return this.posts$;
   }
 
-  getPostById(id: number): Post | undefined {
+  getPostById(id: string): Post | undefined {
     return this.posts.find(post => post.id === id);
   }
 
@@ -71,7 +76,7 @@ export class PostService {
     });
   }
 
-  deletePost(id: number): Observable<void> {
+  deletePost(id: string): Observable<void> {
     this.posts = this.posts.filter(post => post.id !== id);
     this.postsSubject.next(this.posts);
     return new Observable(observer => {
@@ -79,7 +84,8 @@ export class PostService {
     });
   }
 
-  private generateId(): number {
-    return this.posts.length > 0 ? Math.max(...this.posts.map(p => p.id || 0)) + 1 : 1;
+  private generateId(): string {
+    const maxId = this.posts.length > 0 ? Math.max(...this.posts.map(p => parseInt(p.id) || 0)) : 0;
+    return (maxId + 1).toString();
   }
 }

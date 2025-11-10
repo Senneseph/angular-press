@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
+import { NgxsModule } from '@ngxs/store';
 import { SharedModule } from '../../shared/shared.module';
+import { MediaState } from '../../store/media/media.state';
 
 const routes: Routes = [
   {
@@ -15,14 +13,10 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    MatCardModule,
-    MatButtonModule,
-    MatTableModule,
-    MatIconModule,
+    NgxsModule.forFeature([MediaState]),
     SharedModule
   ]
 })

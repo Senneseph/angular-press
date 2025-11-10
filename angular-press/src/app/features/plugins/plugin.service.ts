@@ -59,7 +59,7 @@ export class PluginService {
         config,
         enabled: false,
         loaded: false,
-        error: error.message
+        error: error instanceof Error ? error.message : 'Unknown error'
       };
       this.plugins.set(config.name, metadata);
       throw error;
@@ -76,9 +76,10 @@ export class PluginService {
     if (plugin.config.hooks) {
       Object.keys(plugin.config.hooks).forEach(hookName => {
         const hooks = this.hooks.get(hookName) || [];
+        const pluginHooks = plugin.config.hooks?.[hookName] || [];
         this.hooks.set(
           hookName,
-          hooks.filter(hook => !plugin.config.hooks[hookName].includes(hook.callback))
+          hooks.filter(hook => !pluginHooks.includes(hook.callback))
         );
       });
     }

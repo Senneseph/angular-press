@@ -12,6 +12,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { PostState } from './store/posts/posts.state';
+import { PagesState } from './store/pages/pages.state';
+import { MediaState } from './store/media/media.state';
 import { environment } from '../environments/environment';
 
 @NgModule({
@@ -24,13 +26,13 @@ import { environment } from '../environments/environment';
     HttpClientModule,
     BrowserAnimationsModule,
     SharedModule,
-    NgxsModule.forRoot([PostState], {
+    NgxsModule.forRoot([PostState, PagesState, MediaState], {
       developmentMode: !environment.production
     }),
     NgxsRouterPluginModule.forRoot(),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     NgxsStoragePluginModule.forRoot({
-      key: ['posts']
+      keys: ['posts', 'pages', 'media']
     }),
     NgxsFormPluginModule.forRoot()
   ],
