@@ -1,0 +1,85 @@
+<form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ isEditMode ? 'Edit Post' : 'Create New Post' }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title" placeholder="Enter post title">
+          <mat-error *ngIf="postForm.get('title')?.hasError('required')">
+            Title is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <editor
+          formControlName="content"
+          [init]="editorConfig"
+          apiKey="your-tinymce-api-key">
+        </editor>
+        <mat-error *ngIf="postForm.get('content')?.hasError('required')">
+          Content is required
+        </mat-error>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Excerpt</mat-label>
+          <textarea matInput formControlName="excerpt" rows="3" placeholder="Enter post excerpt"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="draft">Draft</mat-option>
+            <mat-option value="published">Published</mat-option>
+            <mat-option value="private">Private</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Categories</mat-label>
+          <mat-chip-list #categoryList>
+            <mat-chip *ngFor="let category of ['Sample Category']" removable="true">
+              {{ category }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="Add category..."
+                   [matChipInputFor]="categoryList"
+                   formControlName="categories">
+          </mat-chip-list>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tags</mat-label>
+          <mat-chip-list #tagList>
+            <mat-chip *ngFor="let tag of ['Sample Tag']" removable="true">
+              {{ tag }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="Add tag..."
+                   [matChipInputFor]="tagList"
+                   formControlName="tags">
+          </mat-chip-list>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button type="button" routerLink="/posts">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!postForm.valid">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</form>

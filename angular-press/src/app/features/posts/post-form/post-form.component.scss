@@ -1,0 +1,43 @@
+.form-row {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-card {
+  margin: 1rem;
+  padding: 1.5rem;
+}
+
+mat-card-header {
+  margin-bottom: 2rem;
+}
+
+editor {
+  min-height: 400px;
+  margin-bottom: 1rem;
+}
+
+mat-card-actions {
+  padding: 1rem 0 0;
+  margin: 0;
+
+  button {
+    margin-left: 1rem;
+  }
+}
+
+mat-form-field {
+  margin-bottom: 0.5rem;
+}
+
+mat-chip-list {
+  width: 100%;
+}
+
+mat-chip {
+  margin: 0.25rem;
+}
