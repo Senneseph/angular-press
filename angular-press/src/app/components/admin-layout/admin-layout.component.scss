@@ -180,19 +180,12 @@
           width: 4px;
           background: #72aee6;
         }
-
-        .dashicons {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
       }
     }
   }
 }
+
+
 
 /* Main Content Area */
 .wp-main-content {
@@ -206,6 +199,32 @@
   }
 }
 
+.dashicons {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 1;
+  font-family: dashicons;
+  text-decoration: inherit;
+  font-weight: 400;
+  font-style: normal;
+  vertical-align: top;
+  text-align: center;
+  transition: color 0.1s ease-in;
+
+  &.dashicons-dashboard::before { content: '📊'; }
+  &.dashicons-admin-post::before { content: '📝'; }
+  &.dashicons-admin-media::before { content: '🖼️'; }
+  &.dashicons-admin-page::before { content: '📄'; }
+  &.dashicons-admin-comments::before { content: '💬'; }
+  &.dashicons-admin-appearance::before { content: '🎨'; }
+  &.dashicons-admin-plugins::before { content: '🔌'; }
+  &.dashicons-admin-users::before { content: '👥'; }
+  &.dashicons-admin-tools::before { content: '🔧'; }
+  &.dashicons-admin-settings::before { content: '⚙️'; }
+}
+
 /* Screen reader text */
 .screen-reader-text {
   position: absolute;
@@ -214,3 +233,4 @@
   height: 1px;
   overflow: hidden;
 }
+

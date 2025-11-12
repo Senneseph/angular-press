@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { getApiUrl } from '../../core/utils/api-url.util';
+import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
 
 interface DashboardStats {
   posts: { total: number; published: number; draft: number };
@@ -15,7 +16,7 @@ interface DashboardStats {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AdminLayoutComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

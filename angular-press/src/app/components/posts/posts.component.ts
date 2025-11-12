@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { getApiUrl } from '../../core/utils/api-url.util';
+import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
 
 interface Post {
   ID: number;
@@ -22,7 +23,7 @@ interface Post {
 @Component({
   selector: 'app-posts',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, AdminLayoutComponent],
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss']
 })
