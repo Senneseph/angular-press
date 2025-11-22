@@ -49,7 +49,7 @@ describe('PostListComponent', () => {
     const spy = jasmine.createSpyObj('Store', ['dispatch', 'select']);
 
     await TestBed.configureTestingModule({
-      declarations: [ PostListComponent ],
+      imports: [ PostListComponent ],
       providers: [
         { provide: Store, useValue: spy }
       ]

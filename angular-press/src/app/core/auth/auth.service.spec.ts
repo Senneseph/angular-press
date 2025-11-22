@@ -4,6 +4,19 @@ import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { User } from '../models/user.interface';
 
+// Helper function to create a valid JWT token for testing
+function createMockJWT(payload: any = {}): string {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const body = btoa(JSON.stringify({
+    sub: 1,
+    username: 'testuser',
+    requirePasswordChange: false,
+    ...payload
+  }));
+  const signature = 'mock-signature';
+  return `${header}.${body}.${signature}`;
+}
+
 describe('AuthService', () => {
   let service: AuthService;
   let routerSpy: jasmine.SpyObj<Router>;
@@ -88,7 +101,7 @@ describe('AuthService', () => {
     });
 
     it('should return current user when logged in', (done) => {
-      const mockResponse = { access_token: 'fake-jwt-token' };
+      const mockResponse = { access_token: createMockJWT() };
 
       service.login('admin', 'password').subscribe(() => {
         expect(service.currentUser).toBeTruthy();
@@ -152,9 +165,12 @@ describe('AuthService', () => {
         return;
       }
 
+      const mockToken = createMockJWT();
+      const mockResponse = { access_token: mockToken };
+
       service.login('admin', 'password').subscribe(() => {
-        const storedToken = localStorage.getItem('token');
-        expect(storedToken).toBe('fake-jwt-token');
+        const storedToken = localStorage.getItem('access_token');
+        expect(storedToken).toBe(mockToken);
         done();
       });
 
@@ -191,7 +207,7 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     beforeEach((done) => {
-      const mockResponse = { access_token: 'fake-jwt-token' };
+      const mockResponse = { access_token: createMockJWT() };
       service.login('admin', 'password').subscribe(() => {
         done();
       });

@@ -11,7 +11,7 @@ describe('authGuard', () => {
   let mockState: RouterStateSnapshot;
 
   beforeEach(() => {
-    const authSpy = jasmine.createSpyObj('AuthService', ['hasCapability'], {
+    const authSpy = jasmine.createSpyObj('AuthService', ['hasCapability', 'isAuthenticated'], {
       currentUser: null
     });
     const routSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -46,6 +46,7 @@ describe('authGuard', () => {
           get: () => null,
           configurable: true
         });
+        authServiceSpy.isAuthenticated.and.returnValue(false);
       });
 
       it('should return false', () => {
@@ -98,6 +99,7 @@ describe('authGuard', () => {
           get: () => mockUser,
           configurable: true
         });
+        authServiceSpy.isAuthenticated.and.returnValue(true);
       });
 
       it('should return true when no capability is required', () => {

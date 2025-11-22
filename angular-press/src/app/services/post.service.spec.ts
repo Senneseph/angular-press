@@ -154,10 +154,6 @@ describe('PostService', () => {
       expect(req.request.method).toBe('POST');
       expect(req.request.body.title).toBe('Test Post');
       req.flush(mockResponse);
-
-      // Flush the reload request
-      const reloadReq = httpMock.expectOne(request => request.url.includes('/posts') && request.method === 'GET');
-      reloadReq.flush({ data: [mockResponse], total: 1, page: 1, limit: 100, totalPages: 1 });
     });
 
     it('should trigger reload after creating post', (done) => {
@@ -227,10 +223,6 @@ describe('PostService', () => {
       expect(req.request.method).toBe('PATCH');
       expect(req.request.body.title).toBe('Updated Title');
       req.flush(mockResponse);
-
-      // Flush the reload request
-      const reloadReq = httpMock.expectOne(request => request.url.includes('/posts') && request.method === 'GET');
-      reloadReq.flush({ data: [mockResponse], total: 1, page: 1, limit: 100, totalPages: 1 });
     });
 
     it('should trigger reload after updating post', (done) => {

@@ -25,8 +25,7 @@ describe('PostFormComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [ PostFormComponent ],
-      imports: [ ReactiveFormsModule ],
+      imports: [ PostFormComponent, ReactiveFormsModule ],
       providers: [
         FormBuilder,
         { provide: Store, useValue: storeSpyObj },

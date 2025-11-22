@@ -68,6 +68,25 @@ describe('ThemeService', () => {
         scripts: ['script1.js', 'script2.js'],
         settings: {}
       };
+
+      // Mock appendChild to prevent actual file loading
+      spyOn(document.head, 'appendChild').and.callFake((element: any) => {
+        setTimeout(() => {
+          if (element.onload) {
+            element.onload();
+          }
+        }, 0);
+        return element;
+      });
+
+      spyOn(document.body, 'appendChild').and.callFake((element: any) => {
+        setTimeout(() => {
+          if (element.onload) {
+            element.onload();
+          }
+        }, 0);
+        return element;
+      });
     });
 
     it('should update active theme', async () => {
@@ -94,18 +113,9 @@ describe('ThemeService', () => {
     });
 
     it('should load theme styles', async () => {
-      const appendChildSpy = spyOn(document.head, 'appendChild').and.callFake((element: any) => {
-        // Simulate successful load
-        setTimeout(() => {
-          if (element.onload) {
-            element.onload();
-          }
-        }, 0);
-        return element;
-      });
-
       await service.activateTheme(newTheme);
 
+      const appendChildSpy = document.head.appendChild as jasmine.Spy;
       expect(appendChildSpy).toHaveBeenCalled();
       const calls = appendChildSpy.calls.all();
       const linkElements = calls.filter(call => (call.args[0] as any).tagName === 'LINK');
@@ -159,14 +169,6 @@ describe('ThemeService', () => {
 
     it('should remove previous theme resources before loading new theme', async () => {
       const removeChildSpy = spyOn(document.head, 'removeChild');
-      const appendChildSpy = spyOn(document.head, 'appendChild').and.callFake((element: any) => {
-        setTimeout(() => {
-          if (element.onload) {
-            element.onload();
-          }
-        }, 0);
-        return element;
-      });
 
       // First activation
       await service.activateTheme(newTheme);
@@ -184,6 +186,25 @@ describe('ThemeService', () => {
       expect(removeChildSpy).toHaveBeenCalled();
     });
 
+  });
+
+  // Separate describe block for error handling tests that need custom spy behavior
+  describe('activateTheme error handling', () => {
+    let errorTheme: ThemeConfig;
+
+    beforeEach(() => {
+      errorTheme = {
+        name: 'Error Theme',
+        author: 'Test',
+        version: '1.0.0',
+        description: 'Test',
+        templates: {},
+        styles: ['error-style.css'],
+        scripts: ['error-script.js'],
+        settings: {}
+      };
+    });
+
     it('should handle style loading errors', async () => {
       spyOn(document.head, 'appendChild').and.callFake((element: any) => {
         setTimeout(() => {
@@ -195,7 +216,7 @@ describe('ThemeService', () => {
       });
 
       try {
-        await service.activateTheme(newTheme);
+        await service.activateTheme(errorTheme);
         fail('Should have thrown an error');
       } catch (error: any) {
         expect(error.message).toContain('Failed to load style');
@@ -204,7 +225,7 @@ describe('ThemeService', () => {
 
     it('should handle script loading errors', async () => {
       const themeWithScripts: ThemeConfig = {
-        ...mockConfig,
+        ...errorTheme,
         styles: [],
         scripts: ['failing-script.js']
       };
@@ -225,7 +246,10 @@ describe('ThemeService', () => {
         expect(error.message).toContain('Failed to load script');
       }
     });
+  });
 
+  // Separate describe block for attribute tests that need custom spy behavior
+  describe('activateTheme element attributes', () => {
     it('should set correct attributes on link elements', async () => {
       let linkElement: any = null;
 
@@ -242,8 +266,14 @@ describe('ThemeService', () => {
       });
 
       const themeWithStyle: ThemeConfig = {
-        ...mockConfig,
-        styles: ['test-style.css']
+        name: 'Test',
+        author: 'Test',
+        version: '1.0.0',
+        description: 'Test',
+        templates: {},
+        styles: ['test-style.css'],
+        scripts: [],
+        settings: {}
       };
 
       await service.activateTheme(themeWithStyle);
@@ -269,8 +299,14 @@ describe('ThemeService', () => {
       });
 
       const themeWithScript: ThemeConfig = {
-        ...mockConfig,
-        scripts: ['test-script.js']
+        name: 'Test',
+        author: 'Test',
+        version: '1.0.0',
+        description: 'Test',
+        templates: {},
+        styles: [],
+        scripts: ['test-script.js'],
+        settings: {}
       };
 
       await service.activateTheme(themeWithScript);
@@ -279,10 +315,37 @@ describe('ThemeService', () => {
       expect(scriptElement?.src).toContain('test-script.js');
       expect(scriptElement?.async).toBe(true);
     });
+  });
+
+  // Tests for theme configuration features
+  describe('activateTheme with configuration', () => {
+    beforeEach(() => {
+      // Mock appendChild to prevent actual file loading
+      spyOn(document.head, 'appendChild').and.callFake((element: any) => {
+        setTimeout(() => {
+          if (element.onload) {
+            element.onload();
+          }
+        }, 0);
+        return element;
+      });
+
+      spyOn(document.body, 'appendChild').and.callFake((element: any) => {
+        setTimeout(() => {
+          if (element.onload) {
+            element.onload();
+          }
+        }, 0);
+        return element;
+      });
+    });
 
     it('should handle theme with templates', async () => {
       const themeWithTemplates: ThemeConfig = {
-        ...mockConfig,
+        name: 'Test',
+        author: 'Test',
+        version: '1.0.0',
+        description: 'Test',
         templates: {
           'home': {
             component: null,
@@ -291,7 +354,10 @@ describe('ThemeService', () => {
               description: 'Home page template'
             }
           }
-        }
+        },
+        styles: [],
+        scripts: [],
+        settings: {}
       };
 
       await service.activateTheme(themeWithTemplates);
@@ -304,7 +370,13 @@ describe('ThemeService', () => {
 
     it('should handle theme with settings', async () => {
       const themeWithSettings: ThemeConfig = {
-        ...mockConfig,
+        name: 'Test',
+        author: 'Test',
+        version: '1.0.0',
+        description: 'Test',
+        templates: {},
+        styles: [],
+        scripts: [],
         settings: {
           primaryColor: '#007bff',
           fontSize: '16px'

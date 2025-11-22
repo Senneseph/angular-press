@@ -6,6 +6,7 @@ describe('UserService', () => {
   let service: UserService;
 
   beforeEach(() => {
+    TestBed.resetTestingModule(); // Reset to ensure fresh service instance
     TestBed.configureTestingModule({
       providers: [UserService]
     });
