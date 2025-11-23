@@ -23,6 +23,7 @@ yarn-error.log
 .dockerignore
 .augmentignore
 .gitignore
+.env
 
 # Visual Studio Code
 .vscode/*

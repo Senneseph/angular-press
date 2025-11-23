@@ -289,6 +289,67 @@ describe('AuthService', () => {
     });
   });
 
+  describe('register', () => {
+    it('should register a new user and store token', (done) => {
+      const mockToken = createMockJWT();
+      const mockResponse = { access_token: mockToken };
+
+      service.register('newuser', 'newuser@example.com', 'password', 'New User').subscribe(user => {
+        expect(user).toBeTruthy();
+        expect(user.username).toBe('testuser');
+        expect(localStorage.getItem('access_token')).toBe(mockToken);
+        done();
+      });
+
+      const req = httpMock.expectOne(request => request.url.includes('/auth/register'));
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({
+        username: 'newuser',
+        email: 'newuser@example.com',
+        password: 'password',
+        displayName: 'New User'
+      });
+      req.flush(mockResponse);
+    });
+
+    it('should update currentUser$ after registration', (done) => {
+      const mockToken = createMockJWT();
+      const mockResponse = { access_token: mockToken };
+      let emissionCount = 0;
+
+      service.currentUser$.subscribe(user => {
+        emissionCount++;
+        if (emissionCount === 2) {
+          expect(user).toBeTruthy();
+          done();
+        }
+      });
+
+      service.register('newuser', 'newuser@example.com', 'password', 'New User').subscribe();
+
+      const req = httpMock.expectOne(request => request.url.includes('/auth/register'));
+      req.flush(mockResponse);
+    });
+  });
+
+  describe('getCurrentUser', () => {
+    it('should throw error when no token is found', () => {
+      localStorage.removeItem('access_token');
+      expect(() => service.getCurrentUser()).toThrowError('No token found');
+    });
+
+    it('should decode token and return user', () => {
+      const mockToken = createMockJWT({ sub: '123', username: 'testuser', email: 'test@example.com' });
+      localStorage.setItem('access_token', mockToken);
+
+      const user = service.getCurrentUser();
+      expect(user.id).toBe('123');
+      expect(user.username).toBe('testuser');
+      expect(user.email).toBe('test@example.com');
+      expect(user.role).toBe('administrator');
+    });
+  });
+
   describe('Error Handling', () => {
     it('should handle login error with invalid credentials', (done) => {
       service.login('admin', 'wrongpassword').subscribe({
@@ -318,20 +379,18 @@ describe('AuthService', () => {
       req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
     });
 
-    it('should handle malformed JWT token gracefully', (done) => {
-      const mockResponse = { access_token: 'invalid-token' };
-
-      service.login('admin', 'password').subscribe({
-        next: () => {
-          // Login should succeed but user should be null due to invalid token
-          // The service stores the token but can't decode it
-          expect(service.isAuthenticated()).toBe(true); // Token is stored
+    it('should handle register error', (done) => {
+      service.register('newuser', 'newuser@example.com', 'password', 'New User').subscribe({
+        next: () => fail('should have failed with 400 error'),
+        error: (error) => {
+          expect(error.status).toBe(400);
+          expect(error.statusText).toBe('Bad Request');
           done();
         }
       });
 
-      const req = httpMock.expectOne(request => request.url.includes('/auth/login'));
-      req.flush(mockResponse);
+      const req = httpMock.expectOne(request => request.url.includes('/auth/register'));
+      req.flush('Username already exists', { status: 400, statusText: 'Bad Request' });
     });
   });
 });
