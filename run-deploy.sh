@@ -4,9 +4,6 @@
 set -e
 cd /opt/angularpress
 
-echo "Pulling latest changes from git..."
-git pull origin master
-
 echo "Loading environment variables..."
 export $(cat .env.production | grep -v '^#' | xargs)
 
