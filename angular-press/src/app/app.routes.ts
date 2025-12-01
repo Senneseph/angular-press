@@ -77,6 +77,16 @@ export const routes: Routes = [
         canActivate: [authGuard]
       },
       {
+        path: 'pages/new',
+        loadComponent: () => import('./components/pages/page-editor/page-editor.component').then(m => m.PageEditorComponent),
+        canActivate: [authGuard]
+      },
+      {
+        path: 'pages/:id/edit',
+        loadComponent: () => import('./components/pages/page-editor/page-editor.component').then(m => m.PageEditorComponent),
+        canActivate: [authGuard]
+      },
+      {
         path: 'comments',
         loadComponent: () => import('./components/comments/comments.component').then(m => m.CommentsComponent),
         canActivate: [authGuard]

@@ -1,13 +1,60 @@
 <app-admin-layout>
+  <div class="pages-container">
+    <header class="page-header">
+      <h1>Pages</h1>
+      <button class="btn-primary" (click)="createPage()">
+        <span class="icon">+</span> Add New Page
+      </button>
+    </header>
 
-<div class="wp-admin-page">
-  <div class="wrap">
-    <h1 class="wp-heading-inline">Pages</h1>
-    <a href="#" class="page-title-action">Add New</a>
-    <p class="description">Manage your pages</p>
+    @if (loading()) {
+      <div class="loading-state">
+        <p>Loading pages...</p>
+      </div>
+    } @else if (pages().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📄</div>
+        <h2>No pages yet</h2>
+        <p>Create your first page to get started.</p>
+        <button class="btn-primary" (click)="createPage()">Create Page</button>
+      </div>
+    } @else {
+      <div class="pages-table-wrapper">
+        <table class="pages-table">
+          <thead>
+            <tr>
+              <th class="col-title">Title</th>
+              <th class="col-author">Author</th>
+              <th class="col-status">Status</th>
+              <th class="col-date">Date</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (page of pages(); track page.id) {
+              <tr>
+                <td class="col-title">
+                  <a [routerLink]="['/ap-admin/pages', page.id, 'edit']" class="page-title-link">
+                    {{ page.title || '(no title)' }}
+                  </a>
+                  <div class="page-slug">/{{ page.slug }}</div>
+                </td>
+                <td class="col-author">{{ page.author?.displayName || 'Unknown' }}</td>
+                <td class="col-status">
+                  <span class="status-badge" [ngClass]="getStatusClass(page.status)">
+                    {{ page.status }}
+                  </span>
+                </td>
+                <td class="col-date">{{ page.date | date:'MMM d, y' }}</td>
+                <td class="col-actions">
+                  <button class="btn-icon" title="Edit" (click)="editPage(page.id)">✏️</button>
+                  <button class="btn-icon btn-danger" title="Delete" (click)="deletePage(page.id)">🗑️</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </div>
-</div>
-
-
-
 </app-admin-layout>

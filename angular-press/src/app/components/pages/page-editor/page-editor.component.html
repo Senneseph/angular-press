@@ -1,0 +1,120 @@
+<app-admin-layout>
+  <div class="page-editor">
+    <!-- Top Toolbar -->
+    <header class="editor-toolbar">
+      <div class="toolbar-left">
+        <button class="btn-back" (click)="cancel()">
+          <span class="icon">←</span>
+          <span>Back to Pages</span>
+        </button>
+        <div class="page-title-input">
+          <input 
+            type="text" 
+            [formControl]="$any(pageForm.get('title'))"
+            placeholder="Add page title..."
+            class="title-input"
+          >
+        </div>
+      </div>
+      
+      <div class="toolbar-center">
+        <div class="editor-mode-toggle">
+          <button 
+            [class.active]="isEditorMode() === 'visual'"
+            (click)="isEditorMode.set('visual')">
+            Visual
+          </button>
+          <button 
+            [class.active]="isEditorMode() === 'code'"
+            (click)="isEditorMode.set('code')">
+            Code
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar-right">
+        <select [formControl]="$any(pageForm.get('status'))" class="status-select">
+          <option value="draft">Draft</option>
+          <option value="publish">Published</option>
+          <option value="private">Private</option>
+        </select>
+        
+        <button class="btn-secondary" (click)="save(false)" [disabled]="isSaving()">
+          {{ isSaving() ? 'Saving...' : 'Save Draft' }}
+        </button>
+        
+        <button class="btn-primary" (click)="save(true)" [disabled]="isSaving()">
+          {{ isEditMode ? 'Update' : 'Publish' }}
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Editor Area -->
+    <div class="editor-main">
+      <!-- Left Panel: Block Palette -->
+      <aside class="editor-palette">
+        <app-block-palette 
+          [items]="paletteItems"
+          (blockAdded)="addBlock($event)"
+        ></app-block-palette>
+      </aside>
+
+      <!-- Center: Canvas -->
+      <main class="editor-canvas-container">
+        @if (isEditorMode() === 'visual') {
+          <app-editor-canvas
+            [blocks]="blocks()"
+            [selectedBlockId]="selectedBlockId()"
+            (blockSelected)="selectBlock($event)"
+            (blockUpdated)="updateBlock($event)"
+            (blockDeleted)="deleteBlock($event)"
+            (blockDuplicated)="duplicateBlock($event)"
+            (blockMovedUp)="moveBlockUp($event)"
+            (blockMovedDown)="moveBlockDown($event)"
+            (blocksReordered)="onBlocksReordered($event)"
+          ></app-editor-canvas>
+        } @else {
+          <div class="code-editor">
+            <textarea 
+              class="code-textarea"
+              [value]="generateHtmlFromBlocks(blocks())"
+              readonly
+              placeholder="HTML output will appear here..."
+            ></textarea>
+          </div>
+        }
+      </main>
+
+      <!-- Right Panel: Style Editor -->
+      <aside class="editor-styles">
+        @if (selectedBlock()) {
+          <app-style-editor
+            [block]="selectedBlock()!"
+            (blockUpdated)="updateBlock($event)"
+          ></app-style-editor>
+        } @else {
+          <div class="no-selection">
+            <span class="icon">📄</span>
+            <p>Select a block to edit its styles</p>
+          </div>
+        }
+      </aside>
+    </div>
+
+    <!-- Page Settings Panel -->
+    <div class="page-settings" [class.expanded]="false">
+      <h3>Page Settings</h3>
+      <div class="settings-form">
+        <label>
+          <span>Slug</span>
+          <input type="text" [formControl]="$any(pageForm.get('slug'))" placeholder="page-url-slug">
+        </label>
+        <label>
+          <span>Excerpt</span>
+          <textarea [formControl]="$any(pageForm.get('excerpt'))" placeholder="Brief description..."></textarea>
+        </label>
+      </div>
+    </div>
+  </div>
+</app-admin-layout>
+
